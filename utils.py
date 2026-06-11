@@ -3,7 +3,7 @@ from itertools import product
 
 # Formatos de placa brasileiros
 PADRAO_MERCOSUL = re.compile(r'^[A-Z]{3}\d[A-Z]\d{2}$')
-PADRAO_CINZA = re.compile(r'^[A-Z]{3}\d{4}$')
+PADRAO_ANTIGA = re.compile(r'^[A-Z]{3}\d{4}$')
 PADRAO_ANTIGO = re.compile(r'^[A-Z]{2}\d{5}$')
 
 # Confusões comuns de dígitos em OCR
@@ -45,15 +45,15 @@ def formatar_placa(placa):
 
 def validar_placa(placa):
     raw = limpar_placa(placa)
-    return bool(PADRAO_MERCOSUL.match(raw) or PADRAO_CINZA.match(raw) or PADRAO_ANTIGO.match(raw))
+    return bool(PADRAO_MERCOSUL.match(raw) or PADRAO_ANTIGA.match(raw) or PADRAO_ANTIGO.match(raw))
 
 
 def tipo_placa(placa):
     raw = limpar_placa(placa)
     if PADRAO_MERCOSUL.match(raw):
         return "mercosul"
-    if PADRAO_CINZA.match(raw):
-        return "cinza"
+    if PADRAO_ANTIGA.match(raw):
+        return "antiga"
     if PADRAO_ANTIGO.match(raw):
         return "antigo"
     return "desconhecido"
@@ -74,7 +74,7 @@ def corrigir_erros_mercosul(placa):
     return "".join(chars)
 
 
-def corrigir_erros_cinza(placa):
+def corrigir_erros_antiga(placa):
     if len(placa) != 7:
         return placa
     chars = list(placa)
@@ -109,7 +109,7 @@ def corrigir_placa(placa):
     if validar_placa(raw):
         return raw
     candidatos = []
-    for fn in [corrigir_erros_mercosul, corrigir_erros_cinza, corrigir_erros_antigo]:
+    for fn in [corrigir_erros_mercosul, corrigir_erros_antiga, corrigir_erros_antigo]:
         tentativa = fn(raw)
         if validar_placa(tentativa):
             mudancas = sum(1 for i, c in enumerate(tentativa) if c != raw[i])
@@ -147,7 +147,7 @@ def extrair_todas_placas(texto_ocr):
 def _posicoes_numericas(placa):
     if PADRAO_MERCOSUL.match(placa):
         return [3, 5, 6]
-    if PADRAO_CINZA.match(placa):
+    if PADRAO_ANTIGA.match(placa):
         return [3, 4, 5, 6]
     if PADRAO_ANTIGO.match(placa):
         return [2, 3, 4, 5, 6]
@@ -157,7 +157,7 @@ def _posicoes_numericas(placa):
 def _posicoes_letra(placa):
     if PADRAO_MERCOSUL.match(placa):
         return [0, 1, 2, 4]
-    if PADRAO_CINZA.match(placa):
+    if PADRAO_ANTIGA.match(placa):
         return [0, 1, 2]
     if PADRAO_ANTIGO.match(placa):
         return [0, 1]

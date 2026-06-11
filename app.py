@@ -346,7 +346,10 @@ with aba_cadastrar:
         if validar_placa(placa_fmt):
             st.caption(f"✅ {tipo_placa(placa_fmt)} — formato válido")
         else:
-            st.caption("❌ Formato inválido. Use ABC1D23 (Mercosul) ou ABC1234 (cinza)")
+            st.caption("❌ Formato inválido. Use ABC1D23 (Mercosul) ou ABC1234 (antiga)")
+
+    st.divider()
+    st.subheader("Moradores cadastrados")
 
     with st.form("form_cadastro"):
         nome_input = st.text_input(
@@ -362,7 +365,7 @@ with aba_cadastrar:
             else:
                 if not validar_placa(placa_fmt):
                     st.error(
-                        f"Placa `{placa_fmt}` inválida. Use formato Mercosul (ABC1D23) ou cinza (ABC1234)."
+                        f"Placa `{placa_fmt}` inválida. Use formato Mercosul (ABC1D23) ou antiga (ABC1234)."
                     )
                 else:
                     sucesso, msg = cadastrar_veiculo(placa_fmt, nome_input, ap_input)
